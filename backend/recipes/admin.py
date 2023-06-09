@@ -32,6 +32,7 @@ class RecipeAdmin(admin.ModelAdmin):
     get_ingredients.short_description = 'Ингридиенты'
 
 
+@admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
     list_display = ('name', 'measurement_unit')
     search_fields = ('name', )
@@ -39,6 +40,7 @@ class IngredientAdmin(admin.ModelAdmin):
     empty_value_display = EMPTY_MSG
 
 
+@admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
     list_display = ('name', 'color', 'slug')
     search_fields = ('name', 'slug')
@@ -46,6 +48,7 @@ class TagAdmin(admin.ModelAdmin):
     empty_value_display = EMPTY_MSG
 
 
+@admin.register(Favorite)
 class FavoriteAdmin(admin.ModelAdmin):
     list_display = ('user', 'recipe')
     search_fields = ('user', 'recipe')
@@ -53,14 +56,9 @@ class FavoriteAdmin(admin.ModelAdmin):
     empty_value_display = EMPTY_MSG
 
 
+@admin.register(ShoppingCart)
 class ShoppingCartAdmin(admin.ModelAdmin):
     list_display = ('recipe', 'user')
     search_fields = ('recipe', 'user')
     list_filter = ('user', )
     empty_value_display = EMPTY_MSG
-
-
-admin.site.register(ShoppingCart, ShoppingCartAdmin)
-admin.site.register(Ingredient, IngredientAdmin)
-admin.site.register(Tag, TagAdmin)
-admin.site.register(Favorite, FavoriteAdmin)

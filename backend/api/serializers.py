@@ -5,6 +5,7 @@ from rest_framework import serializers, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import SerializerMethodField
 
+from foodgram.settings import RECIPES_LIMIT_DEF
 from recipes.models import (Favorite, Ingredient, IngredientRecipe,
                             Tag, ShoppingCart, Recipe)
 from users.models import User
@@ -20,8 +21,6 @@ class UserSerializer(UserSerializer):
 
     def get_is_subscribed(self, obj):
         request = self.context.get('request')
-        if self.context.get('request').user.is_anonymous:
-            return False
         return obj.following.filter(user=request.user).exists()
 
 
@@ -71,10 +70,8 @@ class SubscribeSerializer(UserSerializer):
 
     def get_recipes(self, obj):
         request = self.context.get('request')
-        limit = request.GET.get('recipes_limit')
-        recipes = Recipe.objects.filter(author=obj)
-        if limit:
-            recipes = recipes[: int(limit)]
+        limit = int(request.GET.get('recipes_limit', RECIPES_LIMIT_DEF))
+        recipes = Recipe.objects.filter(author=obj)[:limit]
         serializer = RecipeShortSerializer(recipes, many=True, read_only=True)
         return serializer.data
 
@@ -169,9 +166,6 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
 
     def validate_ingredients(self, ingredients):
         ingredients_list = []
-        if not ingredients:
-            raise serializers.ValidationError(
-                'Отсутствуют ингридиенты')
         for ingredient in ingredients:
             if ingredient['id'] in ingredients_list:
                 raise serializers.ValidationError(
@@ -179,7 +173,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             ingredients_list.append(ingredient['id'])
             if int(ingredient.get('amount')) < 1:
                 raise serializers.ValidationError(
-                    'Количество ингредиента больше 0')
+                    'Количество ингредиента не меньше 1')
         return ingredients
 
     @staticmethod

@@ -2,24 +2,24 @@ from django.db.models import Sum
 from django.http.response import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
+from djoser.views import UserViewSet
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.permissions import (IsAuthenticatedOrReadOnly,
                                         IsAuthenticated)
-from djoser.views import UserViewSet
-
-from .serializers import (FavoriteSerializer, RecipeCreateSerializer,
-                          IngredientSerializer, RecipeReadSerializer,
-                          ShoppingCartSerializer, SubscribeSerializer,
-                          TagSerializer, UserSerializer)
-from .pagination import CustomPagination
-from .permissions import AuthorPermission
-from .filters import RecipeFilter, IngredientFilter
 
 from users.models import User, Follow
 from recipes.models import (Recipe, Ingredient, IngredientRecipe, Favorite,
                             ShoppingCart, Tag)
+
+from .pagination import CustomPagination
+from .permissions import AuthorPermission
+from .filters import RecipeFilter, IngredientFilter
+from .serializers import (FavoriteSerializer, RecipeCreateSerializer,
+                          IngredientSerializer, RecipeReadSerializer,
+                          ShoppingCartSerializer, SubscribeSerializer,
+                          TagSerializer, UserSerializer)
 
 
 class UserViewSet(UserViewSet):
@@ -36,20 +36,14 @@ class UserViewSet(UserViewSet):
         user = request.user
         author = get_object_or_404(User, pk=id)
 
-        if request.method == 'POST':
-            serializer = SubscribeSerializer(
-                author, data=request.data, context={'request': request}
-            )
-            serializer.is_valid(raise_exception=True)
-            if not Follow.objects.filter(user=user, author=author).exists():
-                Follow.objects.create(user=user, author=author)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
         if request.method == 'DELETE':
             get_object_or_404(
-                Follow, user=user, author=author
-            ).delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
+                Follow, user=user, author=author).delete()
+        serializer = SubscribeSerializer(
+            author, data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        Follow.objects.get_or_create(user=user, author=author)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @action(detail=False, permission_classes=[IsAuthenticated])
     def subscriptions(self, request):
