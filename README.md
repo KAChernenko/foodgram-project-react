@@ -35,7 +35,7 @@ python manage.py migrate
 python manage.py createsuperuser
 ```
 
-Для запуска frontend(через bash):
+Для запуска frontend:
 
 ```
 cd infra
