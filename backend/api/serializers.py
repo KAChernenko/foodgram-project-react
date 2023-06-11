@@ -21,7 +21,7 @@ class UserSerializer(UserSerializer):
 
     def get_is_subscribed(self, obj):
         request = self.context.get('request')
-        return obj.following.filter(user=request.user).exists()
+        return obj.following.filter(user=request.user.id).exists()
 
 
 class UserCreateSerializer(UserCreateSerializer):
