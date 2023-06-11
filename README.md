@@ -37,6 +37,7 @@ python manage.py createsuperuser
 
 Для запуска frontend:
 
+
 ```
 cd infra
 docker-compose up -d
