@@ -112,6 +112,8 @@ DJOSER = {
     "HIDE_USERS": False,
 }
 
+CSRF_TRUSTED_ORIGINS = ['http://158.160.23.73']
+
 LANGUAGE_CODE = 'ru'
 
 TIME_ZONE = 'Europe/Moscow'
