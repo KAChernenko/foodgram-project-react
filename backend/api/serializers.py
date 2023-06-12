@@ -227,24 +227,27 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
 
 class FavoriteSerializer(serializers.ModelSerializer):
     """  Сериализатор избранных рецептов """
+    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    recipe = serializers.PrimaryKeyRelatedField(queryset=Recipe.objects.all())
 
     class Meta:
         model = Favorite
         fields = ('user', 'recipe',)
 
-    def validate(self, data):
-        user = data['user']
-        if user.favorites.filter(recipe=data['recipe']).exists():
-            raise serializers.ValidationError(
-                'Рецепт уже добавлен в избранное.'
-            )
-        return data
+    def validate(self, obj):
+        user = self.context["request"].user
+        recipe = obj["recipe"]
+        favorite = user.favourites.filter(recipe=recipe).exists()
 
-    def to_representation(self, instance):
-        return RecipeShortSerializer(
-            instance.recipe,
-            context={'request': self.context.get('request')}
-        ).data
+        if self.context.get("request").method == "POST" and favorite:
+            raise serializers.ValidationError(
+                "Этот рецепт уже добавлен в избранном"
+            )
+        if self.context.get("request").method == "DELETE" and not favorite:
+            raise serializers.ValidationError(
+                "Этот рецепт отсутствует в избранном"
+            )
+        return obj
 
 
 class ShoppingCartSerializer(serializers.ModelSerializer):

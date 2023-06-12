@@ -48,7 +48,7 @@ class UserViewSet(UserViewSet):
     @action(detail=False, permission_classes=[IsAuthenticated])
     def subscriptions(self, request):
         user = request.user
-        queryset = user.follower.all()
+        queryset = user.objects.filter(following__user=user)
         pages = self.paginate_queryset(queryset)
         serializer = SubscribeSerializer(
             pages, many=True, context={'request': request}
@@ -137,16 +137,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
         methods=('POST',),
         permission_classes=[IsAuthenticated])
     def favorite(self, request, pk):
-        context = {"request": request}
-        recipe = get_object_or_404(Recipe, id=pk)
         data = {
             'user': request.user.id,
-            'recipe': recipe.id
+            'recipe': pk
         }
-        serializer = FavoriteSerializer(data=data, context=context)
+        serializer = FavoriteSerializer(data=data, context={"request": request})
         serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return self.add_object(Favorite, request.user, pk)
 
     @favorite.mapping.delete
     def destroy_favorite(self, request, pk):
