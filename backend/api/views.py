@@ -29,7 +29,7 @@ class UserViewSet(UserViewSet):
 
     @action(
         detail=True,
-        methods=['post', 'delete'],
+        methods=['POST', 'DELETE'],
         permission_classes=[IsAuthenticated]
     )
     def subscribe(self, request, id):
@@ -39,6 +39,7 @@ class UserViewSet(UserViewSet):
         if request.method == 'DELETE':
             get_object_or_404(
                 Follow, user=user, author=author).delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
         serializer = SubscribeSerializer(
             author, data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
