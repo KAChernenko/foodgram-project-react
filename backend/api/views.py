@@ -37,9 +37,10 @@ class UserViewSet(UserViewSet):
         author = get_object_or_404(User, pk=id)
         serializer = SubscribeSerializer(
             author, data=request.data, context={'request': request})
+
         if request.method == 'DELETE':
-            get_object_or_404(
-                Follow, user=user, author=author).delete()
+            follow = Follow.objects.get(Follow, user=user, author=author)
+            follow.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         serializer.is_valid(raise_exception=True)
         Follow.objects.get_or_create(user=user, author=author)
