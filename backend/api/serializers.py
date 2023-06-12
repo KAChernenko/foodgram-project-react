@@ -130,19 +130,32 @@ class RecipeReadSerializer(serializers.ModelSerializer):
                   'is_favorited', 'is_in_shopping_cart',
                   'name', 'image', 'text', 'cooking_time')
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        request = self.context.get('request')
+        user = request.user if request and hasattr(request, 'user') else None
+        if user:
+            is_favorited = instance.favorites.filter(user=user).exists()
+            is_in_shop_cart = instance.shopping_list.filter(user=user).exists()
+            data['is_favorited'] = is_favorited
+            data['is_in_shopping_cart'] = is_in_shop_cart
+        else:
+            data['is_favorited'] = False
+            data['is_in_shopping_cart'] = False
+        return data
+
 
 class RecipeCreateSerializer(serializers.ModelSerializer):
     """Сериализатор для создания рецепта."""
+    author = UserSerializer(read_only=True)
     ingredients = IngredientRecipeSerializer(
         many=True,
     )
     tags = serializers.PrimaryKeyRelatedField(
         many=True,
         queryset=Tag.objects.all(),
-        error_messages={'does_not_exist': 'Указанного тега не существует'}
     )
     image = Base64ImageField(max_length=None)
-    author = UserSerializer(read_only=True)
     cooking_time = serializers.IntegerField()
 
     class Meta:
@@ -178,16 +191,16 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def create_ingredients(recipe, ingredients):
-        ingredient_liist = []
+        ingredient_list = []
         for ingredient_data in ingredients:
-            ingredient_liist.append(
+            ingredient_list.append(
                 IngredientRecipe(
                     ingredient=ingredient_data.pop('id'),
                     amount=ingredient_data.pop('amount'),
                     recipe=recipe,
                 )
             )
-        IngredientRecipe.objects.bulk_create(ingredient_liist)
+        IngredientRecipe.objects.bulk_create(ingredient_list)
 
     def create(self, validated_data):
         request = self.context.get('request', None)
