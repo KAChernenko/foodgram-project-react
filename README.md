@@ -69,6 +69,7 @@ scp nginx.conf <username>@<host>:/home/<username>/nginx.conf
 ```
 ### Примеры api запросов:
 **`GET` | Список рецептов: `http://158.160.23.73/api/recipes/`**
+```
 {
   "count": 123,
   "next": "http://foodgram.example.org/api/recipes/?page=4",
