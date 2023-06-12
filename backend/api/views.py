@@ -13,7 +13,8 @@ from users.models import User, Follow
 from recipes.models import (Recipe, Ingredient, IngredientRecipe, Favorite,
                             ShoppingCart, Tag)
 
-from .pagination import CustomPagination
+from .pagination import Pagination
+from .permissions import IsAdminAuthorOrReadOnly
 from .filters import RecipeFilter, IngredientFilter
 from .serializers import (FavoriteSerializer, RecipeCreateSerializer,
                           IngredientSerializer, RecipeReadSerializer,
@@ -24,7 +25,7 @@ from .serializers import (FavoriteSerializer, RecipeCreateSerializer,
 class UserViewSet(UserViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    pagination_class = CustomPagination
+    pagination_class = Pagination
 
     @action(
         detail=True,
@@ -74,8 +75,8 @@ class TagViewSet(viewsets.ModelViewSet):
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
-    permission_classes = (IsAuthenticatedOrReadOnly, )
-    pagination_class = CustomPagination
+    permission_classes = (IsAdminAuthorOrReadOnly, )
+    pagination_class = Pagination
     filter_backends = (DjangoFilterBackend, )
     filterset_class = RecipeFilter
 
