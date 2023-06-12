@@ -14,7 +14,6 @@ from recipes.models import (Recipe, Ingredient, IngredientRecipe, Favorite,
                             ShoppingCart, Tag)
 
 from .pagination import CustomPagination
-from .permissions import AuthorPermission
 from .filters import RecipeFilter, IngredientFilter
 from .serializers import (FavoriteSerializer, RecipeCreateSerializer,
                           IngredientSerializer, RecipeReadSerializer,
@@ -39,7 +38,7 @@ class UserViewSet(UserViewSet):
             author, data=request.data, context={'request': request})
 
         if request.method == 'DELETE':
-            follow = Follow.objects.get(Follow, user=user, author=author)
+            follow = Follow.objects.get(user=user, author=author)
             follow.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         serializer.is_valid(raise_exception=True)
@@ -76,7 +75,7 @@ class TagViewSet(viewsets.ModelViewSet):
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeCreateSerializer
-    permission_classes = (AuthorPermission, )
+    permission_classes = (IsAuthenticated, )
     pagination_class = CustomPagination
     filter_backends = (DjangoFilterBackend, )
     filterset_class = RecipeFilter
