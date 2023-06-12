@@ -74,7 +74,6 @@ class TagViewSet(viewsets.ModelViewSet):
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
-    serializer_class = RecipeCreateSerializer
     permission_classes = (IsAuthenticated, )
     pagination_class = CustomPagination
     filter_backends = (DjangoFilterBackend, )
