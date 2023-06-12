@@ -137,14 +137,16 @@ class RecipeViewSet(viewsets.ModelViewSet):
         methods=('POST',),
         permission_classes=[IsAuthenticated])
     def favorite(self, request, pk):
+        context = {"request": request} 
+        recipe = get_object_or_404(Recipe, id=pk)
         data = {
             'user': request.user.id,
-            'recipe': pk
+            'recipe': recipe.id
         }
-        serializer = FavoriteSerializer(
-            data=data, context={"request": request})
+        serializer = FavoriteSerializer(data=data, context=context)
         serializer.is_valid(raise_exception=True)
-        return self.add_object(Favorite, request.user, pk)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @favorite.mapping.delete
     def destroy_favorite(self, request, pk):
