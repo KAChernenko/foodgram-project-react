@@ -237,7 +237,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
     def validate(self, obj):
         user = self.context["request"].user
         recipe = obj["recipe"]
-        favorite = user.favourites.filter(recipe=recipe).exists()
+        favorite = user.favorites.filter(recipe=recipe).exists()
 
         if self.context.get("request").method == "POST" and favorite:
             raise serializers.ValidationError(
