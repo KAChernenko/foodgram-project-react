@@ -3,8 +3,8 @@
 # Foodgram
 
 http:/158.160.23.73/
-admin@mail.ru 
-login: admin 
+admin@mail.ru
+login: admin
 password: admin
 
 ### Описание
