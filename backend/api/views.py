@@ -35,13 +35,15 @@ class UserViewSet(UserViewSet):
     def subscribe(self, request, id):
         user = request.user
         author = get_object_or_404(User, pk=id)
-        serializer = SubscribeSerializer(
-            author, data=request.data, context={'request': request})
 
         if request.method == 'DELETE':
+            serializer = SubscribeSerializer(
+                author, data=request.data, context={'request': request})
             follow = Follow.objects.get(user=user, author=author)
             follow.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
+        serializer = SubscribeSerializer(
+            author, data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         Follow.objects.get_or_create(user=user, author=author)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
