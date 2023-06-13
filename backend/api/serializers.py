@@ -134,12 +134,12 @@ class RecipeReadSerializer(serializers.ModelSerializer):
     @login_required
     def get_is_favorited(self, obj):
         return obj.favorites.filter(
-            user_id=self.context['request'].user.id).exists()
+            user=self.context['request'].user).exists()
 
     @login_required
     def get_is_in_shopping_cart(self, obj):
         return obj.shopping_list.filter(
-            user_id=self.context.get("request").id).exists()
+            user=self.context.get("request")).exists()
 
 
 class RecipeCreateSerializer(serializers.ModelSerializer):
