@@ -2,7 +2,7 @@
 
 # Foodgram
 
-http:/158.160.23.73/
+http:/84.201.139.34/
 admin@mail.ru
 login: admin
 password: admin
@@ -69,7 +69,7 @@ scp nginx.conf <username>@<host>:/home/<username>/nginx.conf
 ```
 
 ### Примеры api запросов:
-**`GET` | Список рецептов: `http://158.160.23.73/api/recipes/`**
+**`GET` | Список рецептов: `http://84.201.139.34/api/recipes/`**
 
 ```
 {
