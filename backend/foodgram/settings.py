@@ -113,7 +113,7 @@ DJOSER = {
     "HIDE_USERS": False,
 }
 
-CSRF_TRUSTED_ORIGINS = ['http://158.160.23.73']
+CSRF_TRUSTED_ORIGINS = ['http://84.201.139.34']
 
 LANGUAGE_CODE = 'ru'
 
