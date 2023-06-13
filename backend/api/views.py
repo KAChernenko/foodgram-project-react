@@ -89,8 +89,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
         tags = self.request.query_params.getlist('tags')
         if tags:
-            queryset = queryset.filter(tags__name__in=tags)
-        return queryset
+            filtered_queryset = queryset.filter(tags__name__in=tags)
+        return filtered_queryset
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
