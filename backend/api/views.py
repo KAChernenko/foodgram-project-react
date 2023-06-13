@@ -1,8 +1,8 @@
+import djoser
 from django.db.models import Sum
 from django.http.response import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from djoser.views import UserViewSet
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -22,7 +22,7 @@ from .serializers import (FavoriteSerializer, RecipeCreateSerializer,
                           TagSerializer, UserSerializer)
 
 
-class UserViewSet(UserViewSet):
+class UserViewSet(djoser.views.UserViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     pagination_class = Pagination
@@ -48,7 +48,10 @@ class UserViewSet(UserViewSet):
         Follow.objects.get_or_create(user=user, author=author)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @action(detail=False, permission_classes=[IsAuthenticated])
+    @action(
+        detail=False,
+        methods=['GET'],
+        permission_classes=[IsAuthenticated])
     def subscriptions(self, request):
         user = request.user
         queryset = User.objects.filter(following__user=user)
