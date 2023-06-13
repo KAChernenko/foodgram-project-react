@@ -131,7 +131,8 @@ class RecipeReadSerializer(serializers.ModelSerializer):
                   'name', 'image', 'text', 'cooking_time')
 
     def get_is_favorited(self, obj):
-        return obj.favorites.filter(user=self.context['request'].user).exists()
+        return obj.favorites.filter(
+            user_id=self.context['request'].user.id).exists()
 
     def get_is_in_shopping_cart(self, obj):
         return obj.shopping_list.filter(
