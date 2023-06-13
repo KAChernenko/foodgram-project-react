@@ -111,4 +111,3 @@ scp nginx.conf <username>@<host>:/home/<username>/nginx.conf
   ]
 }
 ```
-
