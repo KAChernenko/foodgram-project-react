@@ -1,5 +1,4 @@
 from django.shortcuts import get_object_or_404
-from django.contrib.auth.decorators import login_required
 from drf_base64.fields import Base64ImageField
 from djoser.serializers import UserSerializer, UserCreateSerializer
 from rest_framework import serializers, status
@@ -131,15 +130,13 @@ class RecipeReadSerializer(serializers.ModelSerializer):
                   'is_favorited', 'is_in_shopping_cart',
                   'name', 'image', 'text', 'cooking_time')
 
-    @login_required
     def get_is_favorited(self, obj):
-        return obj.favorites.filter(
-            user=self.context['request'].user).exists()
+        user = self.context['request'].user
+        return obj.favorites.filter(user=user).exists()
 
-    @login_required
     def get_is_in_shopping_cart(self, obj):
-        return obj.shopping_list.filter(
-            user=self.context.get("request")).exists()
+        user = self.context['request'].user
+        return obj.shopping_list.filter(user=user).exists()
 
 
 class RecipeCreateSerializer(serializers.ModelSerializer):
