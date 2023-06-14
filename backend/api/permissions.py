@@ -14,5 +14,5 @@ class IsAdminAuthorOrReadOnly(permissions.BasePermission):
         return (
             request.user.is_authenticated
             and (request.user.is_superuser
-                 or request.user == view.get_object().author)
+                 or request.user == obj.author)
         )
