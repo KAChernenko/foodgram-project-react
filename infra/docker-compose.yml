@@ -10,9 +10,6 @@ services:
 
   backend:
     image: kachernenko/foodgram_backend:latest
-    volumes:
-      - static_value:/app/static/
-      - media_value:/app/media/
     depends_on:
       - db
     env_file:
