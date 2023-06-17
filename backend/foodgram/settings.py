@@ -6,7 +6,7 @@ load_dotenv()
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-SECRET_KEY = 'django-insecure-6wby8##p^p-5w25at!9!r084lc8aggee93jt=m4yma@$c05e=('
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 DEBUG = True
 
@@ -113,7 +113,7 @@ DJOSER = {
     "HIDE_USERS": False,
 }
 
-CSRF_TRUSTED_ORIGINS = ['http://84.201.139.34']
+# CSRF_TRUSTED_ORIGINS = ['http://84.201.139.34']
 
 LANGUAGE_CODE = 'ru'
 
